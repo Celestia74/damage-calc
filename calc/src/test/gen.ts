@@ -174,7 +174,7 @@ class Move implements I.Move {
   readonly zMove?: {
     basePower?: number;
   };
-  readonly isMax?: boolean;
+  readonly isMax?: boolean | 'gmax';
   readonly maxMove?: {
     basePower: number;
   };
@@ -304,6 +304,7 @@ class Specie implements I.Specie {
   readonly gender?: I.GenderName;
   readonly nfe?: boolean;
   readonly abilities?: {0: I.AbilityName};
+  readonly canGigantamax?: I.MoveName;
   readonly otherFormes?: I.SpeciesName[];
   readonly baseSpecies?: I.SpeciesName;
 
@@ -319,6 +320,7 @@ class Specie implements I.Specie {
     const nfe = !!species.evos?.some((s: string) => exists(dex.species.get(s), dex.gen));
     if (nfe) this.nfe = nfe;
     if (dex.gen > 2) this.abilities = {0: species.abilities[0] as I.AbilityName};
+    if (dex.gen > 7 && species.canGigantamax) this.canGigantamax = species.canGigantamax;
 
     const formes = species.otherFormes?.filter((s: string) => exists(dex.species.get(s), dex.gen));
     if (species.id.startsWith('aegislash')) {
@@ -327,29 +329,12 @@ class Specie implements I.Specie {
       } else {
         this.baseSpecies = 'Aegislash-Blade' as I.SpeciesName;
       }
-    } else if (species.id === 'toxtricity') {
-      this.otherFormes = [
-        'Toxtricity-Gmax', 'Toxtricity-Low-Key', 'Toxtricity-Low-Key-Gmax',
-      ] as I.SpeciesName[];
-    } else if (species.id === 'toxtricitylowkey') {
-      this.baseSpecies = 'Toxtricity' as I.SpeciesName;
-    } else if (species.id === 'urshifu') {
-      this.otherFormes = [
-        'Urshifu-Gmax', 'Urshifu-Rapid-Strike', 'Urshifu-Rapid-Strike-Gmax',
-      ] as I.SpeciesName[];
     } else if (species.id === 'eternatus') {
       this.otherFormes = ['Eternatus-Eternamax'] as I.SpeciesName[];
     } else if (formes?.length) {
       this.otherFormes = [...formes].sort() as I.SpeciesName[];
     } else if (species.baseSpecies !== this.name) {
       this.baseSpecies = species.baseSpecies as I.SpeciesName;
-    }
-    // TODO: clean this up with proper Gigantamax support
-    if (dex.gen === 8 && species.canGigantamax &&
-        !(species.id.startsWith('toxtricity') || species.id.startsWith('urshifu'))) {
-      const formes = this.otherFormes || [];
-      const gmax = dex.species.get(`${species.name}-Gmax`);
-      if (exists(gmax, dex.gen)) this.otherFormes = [...formes, gmax.name].sort();
     }
   }
 }
