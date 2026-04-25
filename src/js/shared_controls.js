@@ -499,7 +499,6 @@ $(".move-selector").change(function () {
 	$(this).attr('data-prev', moveName);
 	moveGroupObj.children(".move-type").val(move.type);
 	moveGroupObj.children(".move-cat").val(move.category);
-	moveGroupObj.children(".move-crit").prop("checked", move.willCrit === true);
 
 	var stat = move.category === 'Special' ? 'spa' : 'atk';
 	if (Array.isArray(move.multihit) || (!isNaN(move.multihit) && move.multiaccuracy)) {
@@ -538,6 +537,7 @@ $(".move-selector").change(function () {
 		moveGroupObj.children(".move-hits").hide();
 		moveGroupObj.children(".move-times").show();
 	}
+	moveGroupObj.children(".move-crit").prop("checked", false);
 	moveGroupObj.children(".move-z").prop("checked", false);
 });
 
@@ -1207,7 +1207,7 @@ function checkRivalry(ability) {
 function getMoveDetails(moveInfo, opts) {
 	var moveName = moveInfo.find("select.move-selector").val();
 	var isZMove = gen > 6 && moveInfo.find("input.move-z").prop("checked");
-	var isCrit = moveInfo.find(".move-crit").prop("checked");
+	var isCrit = moveInfo.find(".move-crit").prop("checked") || move.willCrit;
 	var isStellarFirstUse = moveInfo.find(".move-stellar").prop("checked");
 	var hits = +moveInfo.find(".move-hits").val();
 	var timesUsed = +moveInfo.find(".move-times").val();
