@@ -455,6 +455,14 @@ $(".status").bind("keyup change", function () {
 	}
 });
 
+$(".max").change(function () {
+	var maxState = $(this).prop("checked");
+	var pokeObj = $(this).closest(".poke-info");
+	pokeObj.find(".move-crit").each(function () {
+		if ($(this).attr("autocrit") === "yes") $(this).prop("checked", !maxState);
+	});
+});
+
 $(".teraType").change(function () {
 	var pokeObj = $(this).closest(".poke-info");
 	var checked = pokeObj.find(".teraToggle").prop("checked");
@@ -548,6 +556,7 @@ $(".move-selector").change(function () {
 	}
 	var isDynamaxed = pokeObj.find(".max").prop("checked");
 	moveGroupObj.children(".move-crit").prop("checked", !isDynamaxed && move.willCrit);
+	moveGroupObj.find(".move-crit").attr("autocrit", move.willCrit ? "yes" : "no");
 	moveGroupObj.children(".move-z").prop("checked", false);
 });
 
